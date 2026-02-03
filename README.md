@@ -4,7 +4,7 @@
 
 ## 📖 Overview
 
-This project is a **Chrome Extension** integrated with a **MERN Stack Backend** that allows users to virtually "try on" clothing items directly from websites like **Amazon** and **Myntra**.
+This project is a **Chrome Extension** integrated with a **MERN Stack Backend** that allows users to virtually "try on" clothing items directly from websites like **Amazon**.
 
 Instead of guessing how a piece of clothing looks, the user simply clicks the item, and the extension captures the high-resolution image data, processes it via a Node.js backend, and (planned) uses Generative AI to map the clothing onto the user's photo.
 
