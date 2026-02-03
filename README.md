@@ -30,3 +30,9 @@ The system operates as a data pipeline:
 * **High-Res Capture:** Automatically prioritizes high-quality image sources (`data-old-hires`) over standard thumbnails.
 * **Anti-Zoom Locking:** Prevents e-commerce "zoom lenses" from blocking user interaction.
 * **Full-Stack Connectivity:** Successfully sends captured payloads to a local Express server.
+
+## 🔮 Future Roadmap
+
+* [ ]  **User Profile UI:** Add a popup for users to upload their own "base" body photo.
+* [ ]  **Database Integration:** Connect MongoDB to save user "Wardrobes" and history.
+* [ ]  **AI Integration:** Connect the backend to a stable diffusion or VTON (Virtual Try-On Network) API to generate the final result.
