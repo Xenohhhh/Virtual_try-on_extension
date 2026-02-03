@@ -13,8 +13,16 @@ document.body.addEventListener('click', (event) => {
         const standardUrl = event.target.src;
         const finalUrl = highResUrl || standardUrl;
 
-        console.log("-----------------------------");
         console.log("Image Captured:", finalUrl);
-        console.log("-----------------------------");
+
+
+        fetch('http://localhost:8000/api/try-on', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ imageUrl: finalUrl })
+        })
+        .then(res => res.json())
+        .then(data => console.log("Response", data))
+        .catch(err => console.error("Backend error:", err))
     }
 })
