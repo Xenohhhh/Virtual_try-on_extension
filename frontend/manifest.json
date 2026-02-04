@@ -5,8 +5,7 @@
   "description": "Drag clothing items to see them on yourself.",
   "permissions": ["storage", "activeTab"],
   "host_permissions": [
-    "https://*.amazon.in/*",
-    "https://*.myntra.com/*"
+    "https://*.amazon.in/*"
   ],
   "action": {
     "default_popup": "popup.html"

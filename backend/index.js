@@ -1,48 +1,48 @@
 import express from "express"
 import cors from "cors"
 import dotenv from "dotenv"
+import { downloadImage } from "./utils/downloadImage.js"
+import path from "path"
 
 dotenv.config()
 
-
 const app = express();
+const PORT = process.env.PORT || 8000;
 
 app.use(cors())
 app.use(express.json())
 
+const ROOT_DIR = process.cwd()
 
-app.post("/api/try-on", (req, res) => {
+
+app.post("/api/try-on", async (req, res) => {
     try {
-        const { imageUrl } = req.body
+        const { imageUrl, personUrl} = req.body
 
-        if (!imageUrl) {
-            return res.status(400).json({
-                success: false,
-                message: "No image URL found."
-            })
-        }
+        if (!(imageUrl || personUrl)) return res.status(400).json({ success: false, message: "Both images are required." })
 
-        console.log("Image URL: ", imageUrl)
+        const imgPath = path.join(ROOT_DIR, "public", "cloth.jpg")
+        const personPath = path.join(ROOT_DIR, "public", "person.jpg")
 
-
+        await downloadImage(imageUrl, imgPath)
+        await downloadImage(personUrl, personPath)
 
         res.json({
             success: true,
-            message: "Image received by server!",
-            receivedUrl: imageUrl
+            message: "Image has been downloaded",
+            file: {
+                clothUrl: imgPath,
+                PersonUrl: personPath
+            }
         });
-    } 
-    catch (error) {
-        return res.status(400).json({
-            success: false,
-            message: `${error.message}`
-        })
-    }
 
+    }
+    catch (error) {
+        console.log("Process Failed:", error.message);
+        res.status(500).json({ success: false, message: "Server Error" })
+    }
 })
 
-
-
-app.listen(process.env.PORT, () => {
-    console.log(`Server running on port: ${process.env.PORT}`)
+app.listen(PORT, () => {
+    console.log(`Server running on port: ${PORT}`)
 })
