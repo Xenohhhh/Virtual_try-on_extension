@@ -2,6 +2,7 @@ import express from "express"
 import cors from "cors"
 import dotenv from "dotenv"
 import { downloadImage } from "./utils/downloadImage.js"
+import { resizeImg } from "./utils/resizeImage.js"
 import path from "path"
 
 dotenv.config()
@@ -25,7 +26,10 @@ app.post("/api/try-on", async (req, res) => {
         const personPath = path.join(ROOT_DIR, "public", "person.jpg")
 
         await downloadImage(imageUrl, imgPath)
+        await resizeImg(imgPath)
         await downloadImage(personUrl, personPath)
+        await resizeImg(personPath)
+
 
         res.json({
             success: true,
