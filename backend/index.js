@@ -2,6 +2,7 @@ import express from "express"
 import cors from "cors"
 import dotenv from "dotenv"
 import path from "path"
+import fs from "fs/promises"
 import { downloadImage } from "./utils/downloadImage.js"
 import { resizeImg } from "./utils/resizeImage.js"
 import { deleteFile } from "./utils/deleteFile.js"
@@ -25,15 +26,22 @@ app.post("/api/try-on", async (req, res) => {
 
         const imgPath = path.join(ROOT_DIR, "public", "cloth.jpg")
         const personPath = path.join(ROOT_DIR, "public", "person.jpg")
+
+        const clothDest = path.join(ROOT_DIR, "HR-VITON", "data", "test", "cloth", "cloth.jpg");
+        const personDest = path.join(ROOT_DIR, "HR-VITON", "data", "test", "image", "person.jpg");
  
         try {
             await downloadImage(imageUrl, imgPath)
             await downloadImage(personUrl, personPath)
             await resizeImg(imgPath);
             await resizeImg(personPath);
+            await fs.copyFile(imgPath, clothDest)
+            await fs.copyFile(personPath, personDest)
+
         } catch (err) {
             await deleteFile(imgPath);
             await deleteFile(personPath);
+            console.error(err)
             throw err;
         }
 

@@ -4,7 +4,7 @@ import fs from "fs/promises"
 
 export async function resizeImg(imgPath) {
     const max_size = 5*1024*1024;
-    const allowedFormat = ['png', 'jpg', 'jpeg'];
+    const allowedFormat = ['.png', '.jpg', '.jpeg'];
     const target_width = 192;
     const target_height = 256;
 
