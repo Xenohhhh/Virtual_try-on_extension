@@ -1,9 +1,10 @@
 import express from "express"
 import cors from "cors"
 import dotenv from "dotenv"
+import path from "path"
 import { downloadImage } from "./utils/downloadImage.js"
 import { resizeImg } from "./utils/resizeImage.js"
-import path from "path"
+import { deleteFile } from "./utils/deleteFile.js"
 
 dotenv.config()
 
@@ -18,17 +19,23 @@ const ROOT_DIR = process.cwd()
 
 app.post("/api/try-on", async (req, res) => {
     try {
-        const { imageUrl, personUrl} = req.body
+        const { imageUrl, personUrl } = req.body
 
-        if (!(imageUrl || personUrl)) return res.status(400).json({ success: false, message: "Both images are required." })
+        if (!imageUrl || !personUrl) return res.status(400).json({ success: false, message: "Both images are required." })
 
         const imgPath = path.join(ROOT_DIR, "public", "cloth.jpg")
         const personPath = path.join(ROOT_DIR, "public", "person.jpg")
-
-        await downloadImage(imageUrl, imgPath)
-        await resizeImg(imgPath)
-        await downloadImage(personUrl, personPath)
-        await resizeImg(personPath)
+ 
+        try {
+            await downloadImage(imageUrl, imgPath)
+            await downloadImage(personUrl, personPath)
+            await resizeImg(imgPath);
+            await resizeImg(personPath);
+        } catch (err) {
+            await deleteFile(imgPath);
+            await deleteFile(personPath);
+            throw err;
+        }
 
 
         res.json({
