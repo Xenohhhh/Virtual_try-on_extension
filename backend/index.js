@@ -7,6 +7,7 @@ import { downloadImage } from "./utils/downloadImage.js"
 import { resizeImg } from "./utils/resizeImage.js"
 import { deleteFile } from "./utils/deleteFile.js"
 
+
 dotenv.config()
 
 const app = express();
@@ -16,6 +17,7 @@ app.use(cors())
 app.use(express.json())
 
 const ROOT_DIR = process.cwd()
+
 
 
 app.post("/api/try-on", async (req, res) => {
@@ -29,6 +31,8 @@ app.post("/api/try-on", async (req, res) => {
 
         const clothDest = path.join(ROOT_DIR, "HR-VITON", "data", "test", "cloth", "cloth.jpg");
         const personDest = path.join(ROOT_DIR, "HR-VITON", "data", "test", "image", "person.jpg");
+
+        const pairPath = path.join(ROOT_DIR, "HR-VITON", "data", "test", "pairs.txt");
  
         try {
             await downloadImage(imageUrl, imgPath)
@@ -37,6 +41,7 @@ app.post("/api/try-on", async (req, res) => {
             await resizeImg(personPath);
             await fs.copyFile(imgPath, clothDest)
             await fs.copyFile(personPath, personDest)
+            await fs.writeFile(pairPath, "person.jpg cloth.jpg\n")
 
         } catch (err) {
             await deleteFile(imgPath);
