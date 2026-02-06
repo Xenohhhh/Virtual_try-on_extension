@@ -1,38 +1,106 @@
 # Virtual Try-On Browser Extension (Prototype)
 
-> **A Full-Stack AI application that bridges e-commerce browsing with personal styling.**
+A virtual try-on system that allows users to preview how a clothing item would look on a person by combining a Chrome extension frontend with a Node.js backend and an AI-based virtual try-on model (HR-VITON).
 
-## 📖 Overview
+A virtual try-on system that lets users preview how a clothing item would look on a person.This project focuses on **robust backend engineering and AI input orchestration** for virtual try-on models (HR-VITON), integrated with a Chrome extension frontend.
 
-This project is a **Chrome Extension** integrated with a **MERN Stack Backend** that allows users to virtually "try on" clothing items directly from websites like **Amazon**.
+> Built with a production-style mindset: validation, transaction safety, and clean AI boundaries.
 
-Instead of guessing how a piece of clothing looks, the user simply clicks the item, and the extension captures the high-resolution image data, processes it via a Node.js backend, and (planned) uses Generative AI to map the clothing onto the user's photo.
+## 🚀 Highlights (Why this project stands out)
 
-## 🏗️ Architecture
+- End-to-end **image ingestion pipeline** from real-world URLs
+- **Transaction-safe backend** (no partial state on failure)
+- Clear separation between **staging** and **AI input**
+- AI-ready filesystem orchestration for HR-VITON
+- Designed to scale from single try-on → batch inference
+- GPU-ready architecture (tested on local NVIDIA setup)
 
-The system operates as a data pipeline:
+## 🧠 System Overview
 
-1. **The Sensor (Extension):** Injects code into the browser to detect product images, handling complex DOM structures and dynamic loading (SPAs).
-2. **The Bridge (API):** Transmits image data securely from the client (Browser) to the server.
-3. **The Brain (Backend):** A Node.js/Express server that receives the payload and orchestrates the AI processing (Current Stage).
-4. **The AI (Planned):** Integration with Computer Vision models (e.g., Hugging Face/Vertex AI) for image synthesis.
+Chrome Extension
+↓ (image URL)
+Node.js Backend
+↓
+Download → Validate → Resize → Cleanup-safe
+↓
+HR-VITON Input Preparation
+↓
+AI Inference (next phase)
 
-## 🛠️ Tech Stack
+The backend guarantees that **AI models only ever receive valid, fully-prepared inputs**..
 
-* **Frontend:** Chrome Extension API (Manifest V3), JavaScript (ES6+), HTML5.
-* **Backend:** Node.js, Express.js, Body-Parser.
-* **Networking:** REST API, CORS handling, Fetch API.
-* **Tools:** Chrome DevTools (Console/Network debugging).
+## ✨ Features
 
-## 🚀 Features (Current Status)
+- Chrome extension captures clothing image URLs from e-commerce sites
+- Backend downloads images securely from URLs
+- Image validation (format & size checks)
+- Deterministic image resizing
+- Transaction-safe processing (no partial state on failure)
+- Staging system for safe preprocessing
+- Automatic preparation of HR-VITON input structure
+- Programmatic generation of `pairs.txt` for AI inference
 
-* **Smart Image Detection:** Uses **Event Delegation** to detect clicks on dynamic elements (images that load after the page render).
-* **High-Res Capture:** Automatically prioritizes high-quality image sources (`data-old-hires`) over standard thumbnails.
-* **Anti-Zoom Locking:** Prevents e-commerce "zoom lenses" from blocking user interaction.
-* **Full-Stack Connectivity:** Successfully sends captured payloads to a local Express server.
+## 🔄 Backend Processing Pipeline
 
-## 🔮 Future Roadmap
+The backend follows a **transactional image preprocessing pipeline**:
 
-* [ ]  **User Profile UI:** Add a popup for users to upload their own "base" body photo.
-* [ ]  **Database Integration:** Connect MongoDB to save user "Wardrobes" and history.
-* [ ]  **AI Integration:** Connect the backend to a stable diffusion or VTON (Virtual Try-On Network) API to generate the final result.
+1. **Request validation**
+
+   - Both `imageUrl` (cloth) and `personUrl` are required
+2. **Image staging**
+
+   - Images are downloaded into `backend/public/`
+3. **Validation & resize**
+
+   - File size limit (≤ 5MB)
+   - Allowed formats (`jpg`, `jpeg`, `png`)
+   - Resized to fixed dimensions for AI compatibility
+4. **Safe cleanup**
+
+   - Any failure triggers automatic rollback
+   - No partial or corrupted files remain on disk
+5. **AI input preparation**
+
+   - Images are copied into the HR-VITON test directory
+   - `pairs.txt` is generated programmatically
+
+This guarantees that **HR-VITON only ever sees valid, complete inputs**.
+
+## 📄 `pairs.txt` Format
+
+`pairs.txt` is generated automatically and contains:
+
+person.jpg cloth.jpg
+
+- One pair per line
+- Filenames only (no paths)
+- Required by HR-VITON to map person–cloth pairs.
+
+## 🧱 Engineering Principles Demonstrated
+
+* **Transactional backend design**
+* **Clean separation of concerns**
+* **AI-safe preprocessing**
+* **Failure-first thinking**
+* **Scalable architecture**
+
+This project is intentionally built to resemble **real-world ML-backed systems**, not demos.
+
+## 🖥 Tech Stack
+
+* **Backend:** Node.js, Express
+* **Image Processing:** Sharp
+* **Frontend:** Chrome Extension (JavaScript)
+* **AI Model:** HR-VITON (integration ready)
+* **Hardware:** NVIDIA GPU (RTX-class recommended)
+
+## 🛣 Roadmap
+
+* [X]  Backend preprocessing pipeline
+* [X]  Transaction-safe file handling
+* [X]  HR-VITON input orchestration
+* [ ]  Trigger HR-VITON inference from Node.js
+* [ ]  Capture and return AI output image
+* [ ]  Frontend try-on preview
+* [ ]  Multi-garment & batch support
+* [ ]  Dockerized deployment
